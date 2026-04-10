@@ -87,4 +87,7 @@ PYENV_PROFILE
     ver="$(pyenv exec python --version 2>&1)"
     log_success "Python installed via pyenv: ${ver}"
     record_result "Python (pyenv)" "OK" "${ver}"
+
+    mv /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
+    chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
 }

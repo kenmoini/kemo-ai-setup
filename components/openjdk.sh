@@ -23,7 +23,7 @@ install_openjdk() {
     esac
 
     local ver
-    ver="$(get_version java -version)"
+    ver="$(get_version java -version 2>&1 | head -n 1)"
     log_success "OpenJDK installed: ${ver}"
     record_result "OpenJDK" "OK" "${ver}"
 }

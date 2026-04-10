@@ -13,6 +13,19 @@
 # =============================================================================
 set -euo pipefail
 
+# Associative arrays require Bash 4+. macOS ships Bash 3.2; re-exec under
+# Homebrew's modern bash when available to avoid "unbound variable" errors.
+if (( BASH_VERSINFO[0] < 4 )); then
+    for _bash in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+        if [[ -x "${_bash}" ]] && "${_bash}" -c '(( BASH_VERSINFO[0] >= 4 ))' 2>/dev/null; then
+            exec "${_bash}" "$0" "$@"
+        fi
+    done
+    echo "ERROR: Bash 4+ is required (found ${BASH_VERSION})." >&2
+    echo "On macOS, install it with:  brew install bash" >&2
+    exit 1
+fi
+
 # =============================================================================
 # Section 1: Constants and Defaults
 # =============================================================================
@@ -126,12 +139,12 @@ done
 # Section 3: OS and Environment Detection
 # =============================================================================
 
-log_info()    { echo -e "${BLUE}[INFO]${RESET}    $*"; }
-log_success() { echo -e "${GREEN}[OK]${RESET}      $*"; }
-log_warn()    { echo -e "${YELLOW}[WARN]${RESET}    $*"; }
-log_error()   { echo -e "${RED}[ERROR]${RESET}   $*"; }
-log_skip()    { echo -e "${YELLOW}[SKIP]${RESET}    $*"; }
-log_dry()     { echo -e "${BOLD}[DRY-RUN]${RESET} $*"; }
+log_info()    { echo -e "${BLUE}===== [INFO] ========================${RESET}    $*"; }
+log_success() { echo -e "${GREEN}===== [OK] ========================${RESET}      $*"; }
+log_warn()    { echo -e "${YELLOW}===== [WARN] ========================${RESET}    $*"; }
+log_error()   { echo -e "${RED}===== [ERROR] ========================${RESET}   $*"; }
+log_skip()    { echo -e "${YELLOW}===== [SKIP] ========================${RESET}    $*"; }
+log_dry()     { echo -e "${BOLD}===== [DRY-RUN] ========================${RESET} $*"; }
 
 detect_os() {
     OS_FAMILY="unknown"
@@ -221,7 +234,8 @@ pkg_update() {
     log_info "Refreshing package metadata..."
     case "${PKG_MANAGER}" in
         dnf|yum)
-            _sudo "${PKG_MANAGER}" makecache -q --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y 2>/dev/null || true
+            # _sudo "${PKG_MANAGER}" makecache -q --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y 2>/dev/null || true
+            _sudo "${PKG_MANAGER}" makecache -q -y 2>/dev/null || true
             ;;
         microdnf)
             # microdnf refreshes on install; no explicit makecache needed
@@ -244,12 +258,14 @@ pkg_install() {
     case "${PKG_MANAGER}" in
         dnf|yum)
             local flags=(-y)
-            [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms --setopt=install_weak_deps=False)
+            # [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms --setopt=install_weak_deps=False)
+            [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --setopt=install_weak_deps=False)
             _sudo "${PKG_MANAGER}" install "${flags[@]}" "$@"
             ;;
         microdnf)
             local flags=(-y)
-            [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms --setopt=install_weak_deps=0)
+            # [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms --setopt=install_weak_deps=0)
+            [[ "${IS_CONTAINER}" == "true" ]] && flags+=(--nodocs --setopt=install_weak_deps=0)
             _sudo microdnf install "${flags[@]}" "$@"
             ;;
         apt-get)
@@ -270,8 +286,10 @@ pkg_module_enable() {
 
     case "${PKG_MANAGER}" in
         dnf|yum)
-            _sudo "${PKG_MANAGER}" module reset --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y "${module%%:*}" 2>/dev/null || true
-            _sudo "${PKG_MANAGER}" module enable --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y "${module}"
+            # _sudo "${PKG_MANAGER}" module reset --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y "${module%%:*}" 2>/dev/null || true
+            # _sudo "${PKG_MANAGER}" module enable --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms -y "${module}"
+            _sudo "${PKG_MANAGER}" module reset -y "${module%%:*}" 2>/dev/null || true
+            _sudo "${PKG_MANAGER}" module enable -y "${module}"
             ;;
         microdnf)
             _sudo microdnf module reset -y "${module%%:*}" 2>/dev/null || true

@@ -6,7 +6,7 @@ install_nodejs() {
 
     case "${OS_FAMILY}" in
         rhel)
-            pkg_module_enable "nodejs:${NODEJS_VERSION}"
+            # pkg_module_enable "nodejs:${NODEJS_VERSION}"
             pkg_install nodejs npm
             ;;
         debian)

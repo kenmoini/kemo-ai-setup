@@ -11,7 +11,8 @@
 #     --build-arg ENABLE_OPENJDK=true -t kemo-ai-container:full .
 # =============================================================================
 
-FROM registry.access.redhat.com/ubi9/ubi:latest
+# FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM registry.fedoraproject.org/fedora:44
 
 LABEL maintainer="kemo"
 LABEL description="Agentic AI development container with configurable tooling"
@@ -62,12 +63,6 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
 COPY versions.env /tmp/versions.env
 COPY install.sh /tmp/install.sh
 COPY components/ /tmp/components/
-RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
-    && chmod +x /tmp/install.sh \
-    && /tmp/install.sh --force \
-    && rm -rf /tmp/install.sh /tmp/versions.env /tmp/components \
-    && dnf clean all \
-    && rm -rf /var/cache/dnf
 
 # ---------------------------------------------------------------------------
 # Create non-root user
@@ -75,6 +70,14 @@ RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablere
 RUN useradd -m -s /bin/bash dev \
     && mkdir -p /workspace \
     && chown dev:dev /workspace
+
+# RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
+RUN dnf update -y \
+    && chmod +x /tmp/install.sh \
+    && /tmp/install.sh --force \
+    && rm -rf /tmp/install.sh /tmp/versions.env /tmp/components \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf
 
 # ---------------------------------------------------------------------------
 # Entrypoint

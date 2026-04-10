@@ -33,7 +33,7 @@ install_gradle() {
     esac
 
     local ver
-    ver="$(get_version gradle --version)"
+    ver="$(get_version gradle --version 2>/dev/null | head -n3 | tail -n1 | awk '{print $2}')"
     log_success "Gradle installed: ${ver}"
     record_result "Gradle" "OK" "${ver}"
 }

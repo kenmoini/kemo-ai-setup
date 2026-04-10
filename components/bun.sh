@@ -18,6 +18,9 @@ install_bun() {
             if ! is_installed curl; then
                 pkg_install curl
             fi
+            if ! is_installed unzip; then
+                pkg_install unzip
+            fi
             if [[ "${BUN_VERSION}" == "latest" ]]; then
                 curl -fsSL https://bun.sh/install | bash
             else
@@ -26,6 +29,13 @@ install_bun() {
             # Source the bun env for the current session
             export BUN_INSTALL="${HOME}/.bun"
             export PATH="${BUN_INSTALL}/bin:${PATH}"
+
+            # Save the bun env to the global profile.d for future sessions
+            if [[ -d /etc/profile.d ]]; then
+                echo "export BUN_INSTALL=\"${BUN_INSTALL}\"" | sudo tee /etc/profile.d/bun.sh
+                echo "export PATH=\"${BUN_INSTALL}/bin:\$PATH\"" | sudo tee -a /etc/profile.d/bun.sh
+                chmod +x /etc/profile.d/bun.sh
+            fi
             ;;
         *)
             log_error "Unsupported OS for Bun"
@@ -37,4 +47,7 @@ install_bun() {
     ver="$(get_version bun --version)"
     log_success "Bun installed: ${ver}"
     record_result "Bun" "OK" "${ver}"
+
+    mv /root/.bun /home/dev/.bun 2>/dev/null || true
+    chown -R dev:dev /home/dev/.bun 2>/dev/null || true
 }

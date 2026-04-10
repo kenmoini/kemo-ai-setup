@@ -30,7 +30,7 @@ install_code_server() {
     esac
 
     local ver
-    ver="$(get_version code-server --version)"
+    ver="$(get_version code-server --version | tail -n 1)"
     log_success "Code Server installed: ${ver}"
     record_result "Code Server" "OK" "${ver}"
 }

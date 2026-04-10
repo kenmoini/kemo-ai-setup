@@ -6,10 +6,10 @@ install_build_essentials() {
 
     case "${OS_FAMILY}" in
         rhel)
-            pkg_install gcc gcc-c++ make automake autoconf pkgconfig
+            pkg_install gcc gcc-c++ make automake autoconf pkgconfig which
             ;;
         debian)
-            pkg_install build-essential pkg-config
+            pkg_install build-essential pkg-config which
             ;;
         macos)
             if xcode-select -p &>/dev/null; then
