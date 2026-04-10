@@ -1,0 +1,43 @@
+# =============================================================================
+# compose.yaml - Podman/Docker Compose for the AI development container
+#
+# Usage:
+#   cp .env.example .env    # edit toggles as needed
+#   podman compose up -d
+#   podman compose exec dev bash
+# =============================================================================
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Containerfile
+      args:
+        ENABLE_GIT: "${ENABLE_GIT:-true}"
+        ENABLE_BUILD_ESSENTIALS: "${ENABLE_BUILD_ESSENTIALS:-true}"
+        ENABLE_NODEJS: "${ENABLE_NODEJS:-true}"
+        ENABLE_PNPM: "${ENABLE_PNPM:-false}"
+        ENABLE_BUN: "${ENABLE_BUN:-false}"
+        ENABLE_CLAUDE_CODE: "${ENABLE_CLAUDE_CODE:-true}"
+        ENABLE_CODEX: "${ENABLE_CODEX:-false}"
+        ENABLE_GEMINI: "${ENABLE_GEMINI:-false}"
+        ENABLE_PYTHON: "${ENABLE_PYTHON:-true}"
+        ENABLE_GOLANG: "${ENABLE_GOLANG:-false}"
+        ENABLE_RUST: "${ENABLE_RUST:-false}"
+        ENABLE_PHP: "${ENABLE_PHP:-false}"
+        ENABLE_OPENJDK: "${ENABLE_OPENJDK:-false}"
+        ENABLE_MAVEN: "${ENABLE_MAVEN:-false}"
+        ENABLE_GRADLE: "${ENABLE_GRADLE:-false}"
+    volumes:
+      - ./workspace:/workspace
+      # Persist Claude Code config across container restarts
+      - ${HOME}/.claude:/home/dev/.claude
+    environment:
+      # Pass API keys from host environment (set them in your shell or .env)
+      - ANTHROPIC_API_KEY
+      - OPENAI_API_KEY
+      - GEMINI_API_KEY
+      # Set to 'true' to print tool versions on container start
+      - SHOW_VERSIONS=false
+    stdin_open: true
+    tty: true

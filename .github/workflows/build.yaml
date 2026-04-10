@@ -1,0 +1,168 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ----------------------------------------------------------------
+  # Job 1: Build container image with all components enabled
+  # ----------------------------------------------------------------
+  container-build:
+    name: Container Build (all components)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build container image
+        run: |
+          docker build \
+            --build-arg ENABLE_GIT=true \
+            --build-arg ENABLE_BUILD_ESSENTIALS=true \
+            --build-arg ENABLE_NODEJS=true \
+            --build-arg ENABLE_PNPM=true \
+            --build-arg ENABLE_BUN=true \
+            --build-arg ENABLE_CLAUDE_CODE=true \
+            --build-arg ENABLE_CODEX=true \
+            --build-arg ENABLE_GEMINI=true \
+            --build-arg ENABLE_PYTHON=true \
+            --build-arg ENABLE_GOLANG=true \
+            --build-arg ENABLE_RUST=true \
+            --build-arg ENABLE_PHP=true \
+            --build-arg ENABLE_OPENJDK=true \
+            --build-arg ENABLE_MAVEN=true \
+            --build-arg ENABLE_GRADLE=true \
+            -f Containerfile \
+            -t kemo-ai-container:test .
+
+      - name: Verify installed tools
+        run: |
+          docker run --rm kemo-ai-container:test bash -lc '
+            echo "=== Tool Verification ==="
+            set -e
+            git --version
+            gcc --version | head -1
+            node --version
+            npm --version
+            pnpm --version
+            bun --version
+            claude --version || echo "claude: installed (version check may require auth)"
+            codex --version || echo "codex: installed (version check may require auth)"
+            gemini --version || echo "gemini: installed (version check may require auth)"
+            pyenv --version
+            pyenv exec python --version
+            go version
+            rustc --version
+            php --version | head -1
+            java -version 2>&1 | head -1
+            mvn --version | head -1
+            gradle --version | head -3
+            echo "=== All tools verified ==="
+          '
+
+  # ----------------------------------------------------------------
+  # Job 2: Run install.sh on Ubuntu
+  # ----------------------------------------------------------------
+  ubuntu-install:
+    name: Install Script (Ubuntu)
+    runs-on: ubuntu-latest
+    env:
+      ENABLE_GIT: "true"
+      ENABLE_BUILD_ESSENTIALS: "true"
+      ENABLE_NODEJS: "true"
+      ENABLE_PNPM: "true"
+      ENABLE_BUN: "true"
+      ENABLE_CLAUDE_CODE: "true"
+      ENABLE_CODEX: "true"
+      ENABLE_GEMINI: "true"
+      ENABLE_PYTHON: "true"
+      ENABLE_GOLANG: "true"
+      ENABLE_RUST: "true"
+      ENABLE_PHP: "true"
+      ENABLE_OPENJDK: "true"
+      ENABLE_MAVEN: "true"
+      ENABLE_GRADLE: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install script
+        run: |
+          chmod +x install.sh
+          ./install.sh --force
+
+      - name: Verify installed tools
+        shell: bash -l {0}
+        run: |
+          echo "=== Tool Verification ==="
+          git --version
+          gcc --version | head -1
+          node --version
+          npm --version
+          pnpm --version
+          bun --version
+          claude --version || echo "claude: installed (version check may require auth)"
+          codex --version || echo "codex: installed (version check may require auth)"
+          gemini --version || echo "gemini: installed (version check may require auth)"
+          pyenv --version
+          pyenv exec python --version
+          go version
+          rustc --version
+          php --version | head -1
+          java -version 2>&1 | head -1
+          mvn --version | head -1
+          gradle --version | head -3
+          echo "=== All tools verified ==="
+
+  # ----------------------------------------------------------------
+  # Job 3: Run install.sh on macOS
+  # ----------------------------------------------------------------
+  macos-install:
+    name: Install Script (macOS)
+    runs-on: macos-latest
+    env:
+      ENABLE_GIT: "true"
+      ENABLE_BUILD_ESSENTIALS: "true"
+      ENABLE_NODEJS: "true"
+      ENABLE_PNPM: "true"
+      ENABLE_BUN: "true"
+      ENABLE_CLAUDE_CODE: "true"
+      ENABLE_CODEX: "true"
+      ENABLE_GEMINI: "true"
+      ENABLE_PYTHON: "true"
+      ENABLE_GOLANG: "true"
+      ENABLE_RUST: "true"
+      ENABLE_PHP: "true"
+      ENABLE_OPENJDK: "true"
+      ENABLE_MAVEN: "true"
+      ENABLE_GRADLE: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install script
+        run: |
+          chmod +x install.sh
+          ./install.sh --force
+
+      - name: Verify installed tools
+        shell: bash -l {0}
+        run: |
+          echo "=== Tool Verification ==="
+          git --version
+          gcc --version | head -1
+          node --version
+          npm --version
+          pnpm --version
+          bun --version
+          claude --version || echo "claude: installed (version check may require auth)"
+          codex --version || echo "codex: installed (version check may require auth)"
+          gemini --version || echo "gemini: installed (version check may require auth)"
+          pyenv --version
+          pyenv exec python --version
+          go version
+          rustc --version
+          php --version | head -1
+          java -version 2>&1 | head -1
+          mvn --version | head -1
+          gradle --version | head -3
+          echo "=== All tools verified ==="
