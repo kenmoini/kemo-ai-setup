@@ -34,6 +34,7 @@ ARG ENABLE_PHP=false
 ARG ENABLE_OPENJDK=false
 ARG ENABLE_MAVEN=false
 ARG ENABLE_GRADLE=false
+ARG ENABLE_CODE_SERVER=false
 
 # ---------------------------------------------------------------------------
 # Convert ARGs to ENVs so install.sh can read them
@@ -52,7 +53,8 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
     ENABLE_PHP=${ENABLE_PHP} \
     ENABLE_OPENJDK=${ENABLE_OPENJDK} \
     ENABLE_MAVEN=${ENABLE_MAVEN} \
-    ENABLE_GRADLE=${ENABLE_GRADLE}
+    ENABLE_GRADLE=${ENABLE_GRADLE} \
+    ENABLE_CODE_SERVER=${ENABLE_CODE_SERVER}
 
 # ---------------------------------------------------------------------------
 # Install all components via install.sh (single layer)
@@ -78,6 +80,12 @@ RUN useradd -m -s /bin/bash dev \
 # Entrypoint
 # ---------------------------------------------------------------------------
 COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# ---------------------------------------------------------------------------
+# Expose ports
+# ---------------------------------------------------------------------------
+# Code Server (VS Code in browser)
+EXPOSE 8080
 
 ENV HOME=/home/dev
 USER dev

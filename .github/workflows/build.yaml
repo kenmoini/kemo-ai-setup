@@ -33,6 +33,7 @@ jobs:
             --build-arg ENABLE_OPENJDK=true \
             --build-arg ENABLE_MAVEN=true \
             --build-arg ENABLE_GRADLE=true \
+            --build-arg ENABLE_CODE_SERVER=true \
             -f Containerfile \
             -t kemo-ai-container:test .
 
@@ -58,6 +59,7 @@ jobs:
             java -version 2>&1 | head -1
             mvn --version | head -1
             gradle --version | head -3
+            code-server --version | head -1
             echo "=== All tools verified ==="
           '
 
@@ -83,6 +85,7 @@ jobs:
       ENABLE_OPENJDK: "true"
       ENABLE_MAVEN: "true"
       ENABLE_GRADLE: "true"
+      ENABLE_CODE_SERVER: "true"
     steps:
       - uses: actions/checkout@v4
 
@@ -112,6 +115,7 @@ jobs:
           java -version 2>&1 | head -1
           mvn --version | head -1
           gradle --version | head -3
+          code-server --version | head -1
           echo "=== All tools verified ==="
 
   # ----------------------------------------------------------------
@@ -136,6 +140,7 @@ jobs:
       ENABLE_OPENJDK: "true"
       ENABLE_MAVEN: "true"
       ENABLE_GRADLE: "true"
+      ENABLE_CODE_SERVER: "true"
     steps:
       - uses: actions/checkout@v4
 
@@ -165,4 +170,5 @@ jobs:
           java -version 2>&1 | head -1
           mvn --version | head -1
           gradle --version | head -3
+          code-server --version | head -1
           echo "=== All tools verified ==="

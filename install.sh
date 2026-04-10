@@ -55,6 +55,7 @@ ENABLE_PHP="${ENABLE_PHP:-false}"
 ENABLE_OPENJDK="${ENABLE_OPENJDK:-false}"
 ENABLE_MAVEN="${ENABLE_MAVEN:-false}"
 ENABLE_GRADLE="${ENABLE_GRADLE:-false}"
+ENABLE_CODE_SERVER="${ENABLE_CODE_SERVER:-false}"
 
 # Flags
 FORCE=false
@@ -409,6 +410,7 @@ INSTALL_ORDER=(
     openjdk
     maven
     gradle
+    code_server
 )
 
 # Map: component -> ENABLE variable, check command
@@ -428,6 +430,7 @@ declare -A COMPONENT_ENABLE=(
     [openjdk]="ENABLE_OPENJDK"
     [maven]="ENABLE_MAVEN"
     [gradle]="ENABLE_GRADLE"
+    [code_server]="ENABLE_CODE_SERVER"
 )
 
 declare -A COMPONENT_CHECK_CMD=(
@@ -446,6 +449,7 @@ declare -A COMPONENT_CHECK_CMD=(
     [openjdk]="java"
     [maven]="mvn"
     [gradle]="gradle"
+    [code_server]="code-server"
 )
 
 declare -A COMPONENT_LABEL=(
@@ -464,6 +468,7 @@ declare -A COMPONENT_LABEL=(
     [openjdk]="OpenJDK"
     [maven]="Maven"
     [gradle]="Gradle"
+    [code_server]="Code Server"
 )
 
 run_installs() {
