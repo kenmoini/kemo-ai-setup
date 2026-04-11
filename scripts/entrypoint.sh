@@ -35,7 +35,13 @@ if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
     echo "=== Installed Tools ==="
     for cmd in node npm npx pnpm bun claude codex gemini go python3 rustc php java mvn gradle git gcc make; do
         if command -v "${cmd}" &>/dev/null; then
-            ver="$("${cmd}" --version 2>&1 | head -1)" || ver="(unknown)"
+            if [[ "${cmd}" == "go" ]]; then
+                ver="$(go version 2>/dev/null)" || ver="(unknown)"
+            elif [[ "${cmd}" == "gradle" ]]; then
+                ver="$(gradle --version 2>/dev/null | grep -oP 'Gradle \K[0-9.]+')" || ver="(unknown)"
+            else
+                ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="$("${cmd}" version 2>/dev/null | head -1)" || ver="(unknown)"
+            fi
             printf "  %-12s %s\n" "${cmd}" "${ver}"
         fi
     done

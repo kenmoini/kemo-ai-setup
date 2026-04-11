@@ -12,6 +12,7 @@ install_build_essentials() {
             pkg_install build-essential pkg-config which
             ;;
         macos)
+            pkg_install bash
             if xcode-select -p &>/dev/null; then
                 log_info "Xcode Command Line Tools already present"
             else

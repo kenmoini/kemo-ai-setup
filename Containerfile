@@ -91,6 +91,7 @@ COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 EXPOSE 8080
 
 ENV HOME=/home/dev
+ENV SHOW_VERSIONS=true
 USER dev
 WORKDIR /workspace
 

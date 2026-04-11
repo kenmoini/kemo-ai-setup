@@ -48,6 +48,10 @@ install_bun() {
     log_success "Bun installed: ${ver}"
     record_result "Bun" "OK" "${ver}"
 
-    mv /root/.bun /home/dev/.bun 2>/dev/null || true
-    chown -R dev:dev /home/dev/.bun 2>/dev/null || true
+    if [[ "${OS_FAMILY}" != "macos" ]]; then
+        if [[ "$UID" -eq 0 ]]; then
+            cp -R /root/.bun /home/dev/.bun 2>/dev/null || true
+            chown -R dev:dev /home/dev/.bun 2>/dev/null || true
+        fi
+    fi
 }

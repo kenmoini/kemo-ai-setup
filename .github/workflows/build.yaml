@@ -58,7 +58,7 @@ jobs:
             php --version | head -1
             java -version 2>&1 | head -1
             mvn --version | head -1
-            gradle --version | head -3
+            gradle --version 2>/dev/null | head -3
             code-server --version | head -1
             echo "=== All tools verified ==="
           '
@@ -114,7 +114,7 @@ jobs:
           php --version | head -1
           java -version 2>&1 | head -1
           mvn --version | head -1
-          gradle --version | head -3
+          gradle --version 2>/dev/null | head -3
           code-server --version | head -1
           echo "=== All tools verified ==="
 
@@ -146,6 +146,7 @@ jobs:
 
       - name: Run install script
         run: |
+          brew install bash
           chmod +x install.sh
           ./install.sh --force
 
@@ -169,6 +170,6 @@ jobs:
           php --version | head -1
           java -version 2>&1 | head -1
           mvn --version | head -1
-          gradle --version | head -3
+          gradle --version 2>/dev/null | head -3
           code-server --version | head -1
           echo "=== All tools verified ==="

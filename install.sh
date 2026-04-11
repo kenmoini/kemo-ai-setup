@@ -378,7 +378,7 @@ get_version() {
     local cmd="$1"
     shift
     if is_installed "${cmd}"; then
-        "${cmd}" "$@" 2>&1 | head -1
+        "${cmd}" "$@" 2>/dev/null | head -1
     else
         echo "n/a"
     fi

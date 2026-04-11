@@ -13,6 +13,16 @@ install_rust() {
             esac
         fi
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+
+        if [[ "${OS_FAMILY}" != "macos" ]]; then
+            if [[ "$UID" -eq 0 ]]; then
+                cp -R /root/.cargo /home/dev/.cargo 2>/dev/null || true
+                chown -R dev:dev /home/dev/.cargo 2>/dev/null || true
+                cp -R /root/.rustup /home/dev/.rustup 2>/dev/null || true
+                chown -R dev:dev /home/dev/.rustup 2>/dev/null || true
+            fi
+        fi
+
         export PATH="${HOME}/.cargo/bin:${PATH}"
         # Persist PATH
         local shell_profile="${HOME}/.bashrc"

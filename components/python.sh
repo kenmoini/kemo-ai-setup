@@ -88,6 +88,11 @@ PYENV_PROFILE
     log_success "Python installed via pyenv: ${ver}"
     record_result "Python (pyenv)" "OK" "${ver}"
 
-    mv /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
-    chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
+
+    if [[ "${OS_FAMILY}" != "macos" ]]; then
+        if [[ "$UID" -eq 0 ]]; then
+            cp -R /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
+            chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
+        fi
+    fi
 }

@@ -22,6 +22,14 @@ install_code_server() {
                 pkg_install curl
             fi
             curl -fsSL https://code-server.dev/install.sh | sh
+            code-server --version
+            if [[ "${OS_FAMILY}" != "macos" ]]; then
+                if [[ "$UID" -eq 0 ]]; then
+                    mkdir -p /home/dev/.config/code-server 2>/dev/null || true
+                    cp -R /root/.config/code-server /home/dev/.config/code-server 2>/dev/null || true
+                    chown -R dev:dev /home/dev/.config/code-server 2>/dev/null || true
+                fi
+            fi
             ;;
         *)
             log_error "Unsupported OS for Code Server"
