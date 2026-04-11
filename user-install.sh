@@ -63,6 +63,8 @@ RUST_INSTALL_METHOD="${RUST_INSTALL_METHOD:-rustup}"
 
 # Component toggle defaults
 ENABLE_PYTHON="${ENABLE_PYTHON:-true}"
+ENABLE_OPENCODE="${ENABLE_OPENCODE:-false}"
+ENABLE_GRAPHIFY="${ENABLE_GRAPHIFY:-false}"
 ENABLE_RUST="${ENABLE_RUST:-false}"
 ENABLE_BUN="${ENABLE_BUN:-false}"
 
@@ -260,7 +262,94 @@ install_python_user() {
 }
 
 # =============================================================================
-# Section 6: Rust (rustup)
+# Section 6: OpenCode
+# =============================================================================
+
+install_opencode_user() {
+    if [[ "${ENABLE_OPENCODE}" != "true" ]]; then
+        record_result "OpenCode" "SKIP" "(disabled)"
+        return 0
+    fi
+
+    if [[ "${FORCE}" != "true" ]] && is_installed opencode; then
+        local ver
+        ver="$(get_version opencode --version)"
+        log_skip "OpenCode already installed: ${ver}"
+        record_result "OpenCode" "SKIP" "(installed)"
+        return 0
+    fi
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        log_dry "Would install OpenCode"
+        record_result "OpenCode" "DRY-RUN" ""
+        return 0
+    fi
+
+    log_info "Installing OpenCode..."
+
+    curl -fsSL https://opencode.ai/install | bash
+
+    # Add to PATH for current session
+    [[ -d "${HOME}/.opencode/bin" ]] && export PATH="${HOME}/.opencode/bin:${PATH}"
+
+    local ver
+    ver="$(get_version opencode --version)"
+    log_success "OpenCode installed: ${ver}"
+    record_result "OpenCode" "OK" "${ver}"
+}
+
+# =============================================================================
+# Section 7: graphify (knowledge graph skill)
+# =============================================================================
+
+install_graphify_user() {
+    if [[ "${ENABLE_GRAPHIFY}" != "true" ]]; then
+        record_result "graphify" "SKIP" "(disabled)"
+        return 0
+    fi
+
+    if [[ "${FORCE}" != "true" ]] && is_installed graphify; then
+        local ver
+        ver="$(get_version graphify --version)"
+        log_skip "graphify already installed: ${ver}"
+        record_result "graphify" "SKIP" "(installed)"
+        return 0
+    fi
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        log_dry "Would install graphify"
+        record_result "graphify" "DRY-RUN" ""
+        return 0
+    fi
+
+    # graphify requires Python via pyenv
+    if ! is_installed pyenv; then
+        log_error "graphify requires pyenv/Python — enable ENABLE_PYTHON=true"
+        record_result "graphify" "FAIL" "(missing pyenv)"
+        return 1
+    fi
+
+    log_info "Installing graphify..."
+
+    # Ensure pyenv Python is on PATH
+    export PYENV_ROOT="${PYENV_ROOT:-${HOME}/.pyenv}"
+    export PATH="${PYENV_ROOT}/bin:${PATH}"
+    eval "$(pyenv init - bash)" 2>/dev/null || true
+
+    pip install graphifyy
+
+    # Install the skill into the AI coding assistant config
+    # graphify install || log_warn "graphify install returned non-zero; skill config may need manual setup"
+    graphify install 2>/dev/null || true
+
+    local ver
+    ver="$(pip show graphifyy | grep ^Version: | awk '{print $2}')"
+    log_success "graphify installed: ${ver}"
+    record_result "graphify" "OK" "${ver}"
+}
+
+# =============================================================================
+# Section 8: Rust (rustup)
 # =============================================================================
 
 install_rust_user() {
@@ -309,7 +398,7 @@ install_rust_user() {
 }
 
 # =============================================================================
-# Section 7: Bun
+# Section 9: Bun
 # =============================================================================
 
 install_bun_user() {
@@ -353,7 +442,7 @@ install_bun_user() {
 }
 
 # =============================================================================
-# Section 8: Summary and Entrypoint
+# Section 10: Summary and Entrypoint
 # =============================================================================
 
 print_summary() {
@@ -400,6 +489,8 @@ main() {
     fi
 
     install_python_user
+    install_opencode_user
+    install_graphify_user
     install_rust_user
     install_bun_user
 

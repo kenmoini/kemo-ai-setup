@@ -17,6 +17,9 @@
 # Bun
 [[ -d "${HOME}/.bun/bin" ]]          && export PATH="${HOME}/.bun/bin:${PATH}"
 
+# OpenCode
+[[ -d "${HOME}/.opencode/bin" ]]     && export PATH="${HOME}/.opencode/bin:${PATH}"
+
 # pyenv
 if [[ -d "${HOME}/.pyenv" ]]; then
     export PYENV_ROOT="${HOME}/.pyenv"
@@ -33,12 +36,14 @@ fi
 # --- Version banner (optional) ---
 if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
     echo "=== Installed Tools ==="
-    for cmd in node npm npx pnpm bun claude codex gemini go python3 rustc php java mvn gradle git gcc make; do
+    for cmd in node npm npx pnpm bun claude codex gemini dev-browser opencode graphify go python3 rustc php java mvn gradle git gcc make; do
         if command -v "${cmd}" &>/dev/null; then
             if [[ "${cmd}" == "go" ]]; then
                 ver="$(go version 2>/dev/null)" || ver="(unknown)"
             elif [[ "${cmd}" == "gradle" ]]; then
                 ver="$(gradle --version 2>/dev/null | grep -oP 'Gradle \K[0-9.]+')" || ver="(unknown)"
+            elif [[ "${cmd}" == "graphify" ]]; then
+                ver="$(pip show graphifyy | grep ^Version: | awk '{print $2}')" || ver="(unknown)"
             else
                 ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="(unknown)"
             fi

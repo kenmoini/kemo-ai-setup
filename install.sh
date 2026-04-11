@@ -68,6 +68,9 @@ ENABLE_PHP="${ENABLE_PHP:-false}"
 ENABLE_OPENJDK="${ENABLE_OPENJDK:-false}"
 ENABLE_MAVEN="${ENABLE_MAVEN:-false}"
 ENABLE_GRADLE="${ENABLE_GRADLE:-false}"
+ENABLE_OPENCODE="${ENABLE_OPENCODE:-false}"
+ENABLE_DEV_BROWSER="${ENABLE_DEV_BROWSER:-false}"
+ENABLE_GRAPHIFY="${ENABLE_GRAPHIFY:-false}"
 ENABLE_CODE_SERVER="${ENABLE_CODE_SERVER:-false}"
 
 # Flags
@@ -426,8 +429,11 @@ INSTALL_ORDER=(
     claude_code
     codex
     gemini
+    dev_browser
+    opencode
     golang
     python
+    graphify
     rust
     php
     openjdk
@@ -446,8 +452,11 @@ declare -A COMPONENT_ENABLE=(
     [claude_code]="ENABLE_CLAUDE_CODE"
     [codex]="ENABLE_CODEX"
     [gemini]="ENABLE_GEMINI"
+    [dev_browser]="ENABLE_DEV_BROWSER"
+    [opencode]="ENABLE_OPENCODE"
     [golang]="ENABLE_GOLANG"
     [python]="ENABLE_PYTHON"
+    [graphify]="ENABLE_GRAPHIFY"
     [rust]="ENABLE_RUST"
     [php]="ENABLE_PHP"
     [openjdk]="ENABLE_OPENJDK"
@@ -465,8 +474,11 @@ declare -A COMPONENT_CHECK_CMD=(
     [claude_code]="claude"
     [codex]="codex"
     [gemini]="gemini"
+    [dev_browser]="dev-browser"
+    [opencode]="opencode"
     [golang]="go"
     [python]="pyenv"
+    [graphify]="graphify"
     [rust]="rustc"
     [php]="php"
     [openjdk]="java"
@@ -484,8 +496,11 @@ declare -A COMPONENT_LABEL=(
     [claude_code]="Claude Code"
     [codex]="Codex CLI"
     [gemini]="Gemini CLI"
+    [dev_browser]="dev-browser"
+    [opencode]="OpenCode"
     [golang]="Go"
     [python]="Python (pyenv)"
+    [graphify]="graphify"
     [rust]="Rust"
     [php]="PHP"
     [openjdk]="OpenJDK"
@@ -499,6 +514,8 @@ declare -A COMPONENT_LABEL=(
 # Use user-install.sh to install these as the target user.
 declare -A COMPONENT_USER_SCOPED=(
     [python]=true
+    [graphify]=true
+    [opencode]=true
     [rust]=true
     [bun]=true
 )

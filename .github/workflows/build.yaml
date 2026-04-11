@@ -251,6 +251,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             CACHE_BREAKER=${{ github.event.inputs.cache_breaker }}
+            ENABLE_GIT=true
+            ENABLE_BUILD_ESSENTIALS=true
+            ENABLE_NODEJS=true
+            ENABLE_PNPM=true
+            ENABLE_BUN=true
+            ENABLE_CLAUDE_CODE=true
+            ENABLE_CODEX=true
+            ENABLE_GEMINI=true
+            ENABLE_OPENCODE=true
+            ENABLE_DEV_BROWSER=true
+            ENABLE_GRAPHIFY=true
+            ENABLE_PYTHON=true
+            ENABLE_GOLANG=true
           #push: true
           #provenance: false
           #platforms: linux/amd64, linux/arm64

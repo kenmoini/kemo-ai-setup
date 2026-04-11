@@ -28,7 +28,10 @@ ARG ENABLE_BUN=false
 ARG ENABLE_CLAUDE_CODE=true
 ARG ENABLE_CODEX=false
 ARG ENABLE_GEMINI=false
+ARG ENABLE_OPENCODE=false
+ARG ENABLE_DEV_BROWSER=false
 ARG ENABLE_PYTHON=true
+ARG ENABLE_GRAPHIFY=false
 ARG ENABLE_GOLANG=false
 ARG ENABLE_RUST=false
 ARG ENABLE_PHP=false
@@ -48,7 +51,10 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
     ENABLE_CLAUDE_CODE=${ENABLE_CLAUDE_CODE} \
     ENABLE_CODEX=${ENABLE_CODEX} \
     ENABLE_GEMINI=${ENABLE_GEMINI} \
+    ENABLE_OPENCODE=${ENABLE_OPENCODE} \
+    ENABLE_DEV_BROWSER=${ENABLE_DEV_BROWSER} \
     ENABLE_PYTHON=${ENABLE_PYTHON} \
+    ENABLE_GRAPHIFY=${ENABLE_GRAPHIFY} \
     ENABLE_GOLANG=${ENABLE_GOLANG} \
     ENABLE_RUST=${ENABLE_RUST} \
     ENABLE_PHP=${ENABLE_PHP} \
@@ -85,17 +91,6 @@ RUN dnf update -y \
     && rm -rf /var/cache/dnf
 
 # ---------------------------------------------------------------------------
-# Entrypoint
-# ---------------------------------------------------------------------------
-COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# ---------------------------------------------------------------------------
-# Expose ports
-# ---------------------------------------------------------------------------
-# Code Server (VS Code in browser)
-EXPOSE 8080
-
-# ---------------------------------------------------------------------------
 # User-scoped components (pyenv, rustup, bun) — runs as the dev user so
 # everything installs directly into /home/dev.
 # ---------------------------------------------------------------------------
@@ -113,5 +108,16 @@ USER dev
 
 WORKDIR /workspace
 
+# ---------------------------------------------------------------------------
+# Entrypoint
+# ---------------------------------------------------------------------------
+COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 CMD ["/bin/bash"]
+
+# ---------------------------------------------------------------------------
+# Expose ports
+# ---------------------------------------------------------------------------
+# Code Server (VS Code in browser)
+EXPOSE 8080
