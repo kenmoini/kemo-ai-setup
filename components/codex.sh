@@ -12,6 +12,7 @@ install_codex() {
     fi
 
     npm install -g @openai/codex
+    npm cache clean --force
 
     local ver
     ver="$(get_version codex --version)"

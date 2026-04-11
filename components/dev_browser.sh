@@ -16,13 +16,14 @@ install_dev_browser() {
     fi
 
     npm install -g dev-browser
+    npm cache clean --force
 
     # Download Playwright and Chromium dependencies
     log_info "Running dev-browser install (fetching browser dependencies)..."
     dev-browser install || log_warn "dev-browser install returned non-zero; browser deps may be incomplete"
 
     local ver
-    ver="$(get_version dev-browser --version)"
+    ver="$(npm list -g dev-browser --depth=0 --json 2>/dev/null | jq -r '.dependencies["dev-browser"].version' 2>/dev/null)" || ver="(unknown)"
     log_success "dev-browser installed: ${ver}"
     record_result "dev-browser" "OK" "${ver}"
 }

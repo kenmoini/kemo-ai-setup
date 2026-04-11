@@ -27,6 +27,7 @@ install_graphify() {
     eval "$(pyenv init - bash)" 2>/dev/null || true
 
     pip install graphifyy
+    pip cache purge
 
     # Install the skill into the AI coding assistant config
     graphify install || log_warn "graphify install returned non-zero; skill config may need manual setup"

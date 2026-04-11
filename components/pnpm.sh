@@ -12,6 +12,7 @@ install_pnpm() {
     fi
 
     npm install -g pnpm
+    npm cache clean --force
 
     local ver
     ver="$(get_version pnpm --version)"

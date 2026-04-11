@@ -12,6 +12,7 @@ install_gemini() {
     fi
 
     npm install -g @google/gemini-cli
+    npm cache clean --force
 
     local ver
     ver="$(get_version gemini --version)"

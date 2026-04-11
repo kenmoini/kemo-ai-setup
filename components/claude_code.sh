@@ -12,6 +12,7 @@ install_claude_code() {
     fi
 
     npm install -g @anthropic-ai/claude-code
+    npm cache clean --force
 
     local ver
     ver="$(get_version claude --version)"

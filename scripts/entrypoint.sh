@@ -44,6 +44,8 @@ if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
                 ver="$(gradle --version 2>/dev/null | grep -oP 'Gradle \K[0-9.]+')" || ver="(unknown)"
             elif [[ "${cmd}" == "graphify" ]]; then
                 ver="$(pip show graphifyy | grep ^Version: | awk '{print $2}')" || ver="(unknown)"
+            elif [[ "${cmd}" == "dev-browser" ]]; then
+                ver="$(npm list -g dev-browser --depth=0 --json 2>/dev/null | jq -r '.dependencies["dev-browser"].version' 2>/dev/null)" || ver="(unknown)"
             else
                 ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="(unknown)"
             fi
