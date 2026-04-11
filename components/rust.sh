@@ -1,6 +1,19 @@
 # Component: Rust
 # Sourced by install.sh — do not execute directly.
 
+# Install system-level dependencies needed by rustup.
+# Called by install.sh even when the rustup install itself is deferred to user-install.sh.
+install_rust_deps() {
+    if [[ "${RUST_INSTALL_METHOD}" == "rustup" ]] || [[ "${OS_FAMILY}" == "macos" ]]; then
+        if ! is_installed curl; then
+            case "${OS_FAMILY}" in
+                rhel)   pkg_install curl ;;
+                debian) pkg_install curl ca-certificates ;;
+            esac
+        fi
+    fi
+}
+
 install_rust() {
     log_info "Installing Rust (method: ${RUST_INSTALL_METHOD})..."
 
@@ -14,14 +27,14 @@ install_rust() {
         fi
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
 
-        if [[ "${OS_FAMILY}" != "macos" ]]; then
-            if [[ "$UID" -eq 0 ]]; then
-                cp -R /root/.cargo /home/dev/.cargo 2>/dev/null || true
-                chown -R dev:dev /home/dev/.cargo 2>/dev/null || true
-                cp -R /root/.rustup /home/dev/.rustup 2>/dev/null || true
-                chown -R dev:dev /home/dev/.rustup 2>/dev/null || true
-            fi
-        fi
+        # if [[ "${OS_FAMILY}" != "macos" ]]; then
+        #     if [[ "$UID" -eq 0 ]]; then
+        #         cp -R /root/.cargo /home/dev/.cargo 2>/dev/null || true
+        #         chown -R dev:dev /home/dev/.cargo 2>/dev/null || true
+        #         cp -R /root/.rustup /home/dev/.rustup 2>/dev/null || true
+        #         chown -R dev:dev /home/dev/.rustup 2>/dev/null || true
+        #     fi
+        # fi
 
         export PATH="${HOME}/.cargo/bin:${PATH}"
         # Persist PATH

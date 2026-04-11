@@ -73,6 +73,7 @@ ENABLE_CODE_SERVER="${ENABLE_CODE_SERVER:-false}"
 # Flags
 FORCE=false
 DRY_RUN=false
+ROOT_INSTALL=false
 
 # Colors (disabled if not a terminal)
 if [[ -t 1 ]]; then
@@ -103,9 +104,12 @@ Installs development tools for agentic AI development.
 Components are controlled via ENABLE_* environment variables.
 
 Options:
-  --force     Reinstall components even if already present
-  --dry-run   Show what would be installed without making changes
-  --help      Show this help message
+  --force         Reinstall components even if already present
+  --dry-run       Show what would be installed without making changes
+  --root-install  Install user-scoped components (pyenv, rustup, bun) even
+                  when running as root. Without this flag, these are deferred
+                  to user-install.sh so they install into the correct \$HOME.
+  --help          Show this help message
 
 Examples:
   # Install with defaults
@@ -127,6 +131,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --force)  FORCE=true; shift ;;
         --dry-run) DRY_RUN=true; shift ;;
+        --root-install) ROOT_INSTALL=true; shift ;;
         --help)   usage ;;
         *)
             log_error "Unknown option: $1"
@@ -489,6 +494,15 @@ declare -A COMPONENT_LABEL=(
     [code_server]="Code Server"
 )
 
+# Components that install under $HOME (pyenv, rustup, bun).
+# Skipped when running as root unless --root-install is passed.
+# Use user-install.sh to install these as the target user.
+declare -A COMPONENT_USER_SCOPED=(
+    [python]=true
+    [rust]=true
+    [bun]=true
+)
+
 run_installs() {
     for component in "${INSTALL_ORDER[@]}"; do
         local enable_var="${COMPONENT_ENABLE[${component}]}"
@@ -498,6 +512,20 @@ run_installs() {
 
         if [[ "${enable_val}" != "true" ]]; then
             record_result "${label}" "SKIP" "(disabled)"
+            continue
+        fi
+
+        # Defer user-scoped components when running as root without --root-install
+        if [[ "${COMPONENT_USER_SCOPED[${component}]:-false}" == "true" ]] \
+           && [[ "${EUID:-$(id -u)}" -eq 0 ]] \
+           && [[ "${ROOT_INSTALL}" != "true" ]]; then
+            log_skip "${label} deferred to user-install.sh (running as root without --root-install)"
+            # Still install system-level build dependencies if a deps function exists
+            if type "install_${component}_deps" &>/dev/null; then
+                log_info "Pre-installing system dependencies for ${label}..."
+                "install_${component}_deps"
+            fi
+            record_result "${label}" "DEFERRED" "(user-scoped)"
             continue
         fi
 

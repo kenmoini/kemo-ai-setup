@@ -5,13 +5,9 @@
 # then builds and sets the requested Python version as the global default.
 # Reference: https://github.com/pyenv/pyenv#installation
 
-install_python() {
-    # pyenv needs git to clone itself on Linux
-    ensure_dependency "Git" install_git git
-
-    log_info "Installing Python ${PYTHON_VERSION} via pyenv..."
-
-    # --- Step 1: Install build dependencies for compiling Python ---
+# Install system-level build dependencies needed to compile Python via pyenv.
+# Called by install.sh even when the pyenv install itself is deferred to user-install.sh.
+install_python_deps() {
     log_info "Installing Python build dependencies..."
     case "${OS_FAMILY}" in
         rhel)
@@ -32,6 +28,16 @@ install_python() {
             return 1
             ;;
     esac
+}
+
+install_python() {
+    # pyenv needs git to clone itself on Linux
+    ensure_dependency "Git" install_git git
+
+    log_info "Installing Python ${PYTHON_VERSION} via pyenv..."
+
+    # --- Step 1: Install build dependencies for compiling Python ---
+    install_python_deps
 
     # --- Step 2: Install pyenv ---
     export PYENV_ROOT="${PYENV_ROOT:-${HOME}/.pyenv}"
@@ -89,10 +95,10 @@ PYENV_PROFILE
     record_result "Python (pyenv)" "OK" "${ver}"
 
 
-    if [[ "${OS_FAMILY}" != "macos" ]]; then
-        if [[ "$UID" -eq 0 ]]; then
-            cp -RL /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
-            chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
-        fi
-    fi
+    # if [[ "${OS_FAMILY}" != "macos" ]]; then
+    #     if [[ "$UID" -eq 0 ]]; then
+    #         cp -RL /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
+    #         chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
+    #     fi
+    # fi
 }

@@ -58,25 +58,29 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
     ENABLE_CODE_SERVER=${ENABLE_CODE_SERVER}
 
 # ---------------------------------------------------------------------------
-# Install all components via install.sh (single layer)
-# ---------------------------------------------------------------------------
-COPY versions.env /tmp/versions.env
-COPY install.sh /tmp/install.sh
-COPY components/ /tmp/components/
-
-# ---------------------------------------------------------------------------
 # Create non-root user
 # ---------------------------------------------------------------------------
 RUN useradd -m -s /bin/bash dev \
     && mkdir -p /workspace \
     && chown dev:dev /workspace
 
+# ---------------------------------------------------------------------------
+# Copy build scripts
+# ---------------------------------------------------------------------------
+COPY --chmod=777 versions.env /tmp/versions.env
+COPY --chmod=755 install.sh /tmp/install.sh
+COPY components/ /tmp/components/
+
+# ---------------------------------------------------------------------------
+# System packages and non-user-scoped components (runs as root).
+# User-scoped components (pyenv, rustup, bun) are deferred — install.sh
+# detects UID 0 and skips them, but still installs their build dependencies.
+# ---------------------------------------------------------------------------
 # RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
 RUN dnf update -y \
     && dnf install nano wget curl bash-completion openssh-clients -y \
-    && chmod +x /tmp/install.sh \
     && /tmp/install.sh --force \
-    && rm -rf /tmp/install.sh /tmp/versions.env /tmp/components \
+    && rm -rf /tmp/install.sh /tmp/components \
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
@@ -91,9 +95,22 @@ COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 # Code Server (VS Code in browser)
 EXPOSE 8080
 
+# ---------------------------------------------------------------------------
+# User-scoped components (pyenv, rustup, bun) — runs as the dev user so
+# everything installs directly into /home/dev.
+# ---------------------------------------------------------------------------
+USER dev
+
 ENV HOME=/home/dev
 ENV SHOW_VERSIONS=true
+
+COPY --chmod=777 user-install.sh /tmp/user-install.sh
+RUN /tmp/user-install.sh --force
+
+USER root
+RUN rm -f /tmp/user-install.sh /tmp/versions.env
 USER dev
+
 WORKDIR /workspace
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

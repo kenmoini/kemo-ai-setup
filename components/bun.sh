@@ -1,6 +1,17 @@
 # Component: Bun
 # Sourced by install.sh — do not execute directly.
 
+# Install system-level dependencies needed by the Bun installer.
+# Called by install.sh even when the bun install itself is deferred to user-install.sh.
+install_bun_deps() {
+    case "${OS_FAMILY}" in
+        rhel|debian)
+            is_installed curl  || pkg_install curl
+            is_installed unzip || pkg_install unzip
+            ;;
+    esac
+}
+
 install_bun() {
     log_info "Installing Bun..."
 
@@ -48,10 +59,10 @@ install_bun() {
     log_success "Bun installed: ${ver}"
     record_result "Bun" "OK" "${ver}"
 
-    if [[ "${OS_FAMILY}" != "macos" ]]; then
-        if [[ "$UID" -eq 0 ]]; then
-            cp -R /root/.bun /home/dev/.bun 2>/dev/null || true
-            chown -R dev:dev /home/dev/.bun 2>/dev/null || true
-        fi
-    fi
+    # if [[ "${OS_FAMILY}" != "macos" ]]; then
+    #     if [[ "$UID" -eq 0 ]]; then
+    #         cp -R /root/.bun /home/dev/.bun 2>/dev/null || true
+    #         chown -R dev:dev /home/dev/.bun 2>/dev/null || true
+    #     fi
+    # fi
 }
