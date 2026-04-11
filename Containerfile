@@ -73,6 +73,7 @@ RUN useradd -m -s /bin/bash dev \
 
 # RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
 RUN dnf update -y \
+    && dnf install nano wget curl bash-completion -y \
     && chmod +x /tmp/install.sh \
     && /tmp/install.sh --force \
     && rm -rf /tmp/install.sh /tmp/versions.env /tmp/components \

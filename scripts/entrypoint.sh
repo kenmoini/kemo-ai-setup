@@ -40,7 +40,7 @@ if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
             elif [[ "${cmd}" == "gradle" ]]; then
                 ver="$(gradle --version 2>/dev/null | grep -oP 'Gradle \K[0-9.]+')" || ver="(unknown)"
             else
-                ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="$("${cmd}" version 2>/dev/null | head -1)" || ver="(unknown)"
+                ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="(unknown)"
             fi
             printf "  %-12s %s\n" "${cmd}" "${ver}"
         fi
