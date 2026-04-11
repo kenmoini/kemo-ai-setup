@@ -13,7 +13,7 @@ jobs:
     name: Container Build (all components)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build container image
         run: |
@@ -87,7 +87,7 @@ jobs:
       ENABLE_GRADLE: "true"
       ENABLE_CODE_SERVER: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run install script
         run: |
@@ -142,7 +142,7 @@ jobs:
       ENABLE_GRADLE: "true"
       ENABLE_CODE_SERVER: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run install script
         run: |
