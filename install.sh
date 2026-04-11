@@ -59,6 +59,7 @@ ENABLE_NODEJS="${ENABLE_NODEJS:-true}"
 ENABLE_PNPM="${ENABLE_PNPM:-false}"
 ENABLE_BUN="${ENABLE_BUN:-false}"
 ENABLE_CLAUDE_CODE="${ENABLE_CLAUDE_CODE:-true}"
+ENABLE_CLAUDE_CODE_ROUTER="${ENABLE_CLAUDE_CODE_ROUTER:-false}"
 ENABLE_CODEX="${ENABLE_CODEX:-false}"
 ENABLE_GEMINI="${ENABLE_GEMINI:-false}"
 ENABLE_PYTHON="${ENABLE_PYTHON:-true}"
@@ -427,6 +428,7 @@ INSTALL_ORDER=(
     pnpm
     bun
     claude_code
+    claude_code_router
     codex
     gemini
     dev_browser
@@ -450,6 +452,7 @@ declare -A COMPONENT_ENABLE=(
     [pnpm]="ENABLE_PNPM"
     [bun]="ENABLE_BUN"
     [claude_code]="ENABLE_CLAUDE_CODE"
+    [claude_code_router]="ENABLE_CLAUDE_CODE_ROUTER"
     [codex]="ENABLE_CODEX"
     [gemini]="ENABLE_GEMINI"
     [dev_browser]="ENABLE_DEV_BROWSER"
@@ -472,6 +475,7 @@ declare -A COMPONENT_CHECK_CMD=(
     [pnpm]="pnpm"
     [bun]="bun"
     [claude_code]="claude"
+    [claude_code_router]="ccr"
     [codex]="codex"
     [gemini]="gemini"
     [dev_browser]="dev-browser"
@@ -494,6 +498,7 @@ declare -A COMPONENT_LABEL=(
     [pnpm]="pnpm"
     [bun]="Bun"
     [claude_code]="Claude Code"
+    [claude_code_router]="Claude Code Router"
     [codex]="Codex CLI"
     [gemini]="Gemini CLI"
     [dev_browser]="dev-browser"
@@ -513,9 +518,10 @@ declare -A COMPONENT_LABEL=(
 # Skipped when running as root unless --root-install is passed.
 # Use user-install.sh to install these as the target user.
 declare -A COMPONENT_USER_SCOPED=(
+    [claude_code]=true
+    [opencode]=true
     [python]=true
     [graphify]=true
-    [opencode]=true
     [rust]=true
     [bun]=true
 )

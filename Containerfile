@@ -26,6 +26,7 @@ ARG ENABLE_NODEJS=true
 ARG ENABLE_PNPM=false
 ARG ENABLE_BUN=false
 ARG ENABLE_CLAUDE_CODE=true
+ARG ENABLE_CLAUDE_CODE_ROUTER=false
 ARG ENABLE_CODEX=false
 ARG ENABLE_GEMINI=false
 ARG ENABLE_OPENCODE=false
@@ -49,6 +50,7 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
     ENABLE_PNPM=${ENABLE_PNPM} \
     ENABLE_BUN=${ENABLE_BUN} \
     ENABLE_CLAUDE_CODE=${ENABLE_CLAUDE_CODE} \
+    ENABLE_CLAUDE_CODE_ROUTER=${ENABLE_CLAUDE_CODE_ROUTER} \
     ENABLE_CODEX=${ENABLE_CODEX} \
     ENABLE_GEMINI=${ENABLE_GEMINI} \
     ENABLE_OPENCODE=${ENABLE_OPENCODE} \
@@ -84,7 +86,7 @@ COPY components/ /tmp/components/
 # ---------------------------------------------------------------------------
 # RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
 RUN dnf update -y \
-    && dnf install nano wget curl bash-completion openssh-clients jq -y \
+    && dnf install nano wget curl bash-completion openssh-clients jq procps-ng which iputils -y \
     && /tmp/install.sh --force \
     && rm -rf /tmp/install.sh /tmp/components \
     && dnf clean all \
@@ -121,3 +123,5 @@ CMD ["/bin/bash"]
 # ---------------------------------------------------------------------------
 # Code Server (VS Code in browser)
 EXPOSE 8080
+# Claude Code Router
+EXPOSE 3456

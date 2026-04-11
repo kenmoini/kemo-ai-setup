@@ -15,6 +15,7 @@ podman build \
   --build-arg ENABLE_PNPM=true \
   --build-arg ENABLE_BUN=true \
   --build-arg ENABLE_CLAUDE_CODE=true \
+  --build-arg ENABLE_CLAUDE_CODE_ROUTER=true \
   --build-arg ENABLE_CODEX=true \
   --build-arg ENABLE_GEMINI=true \
   --build-arg ENABLE_GOLANG=true \

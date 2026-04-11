@@ -62,6 +62,7 @@ BUN_VERSION="${BUN_VERSION:-latest}"
 RUST_INSTALL_METHOD="${RUST_INSTALL_METHOD:-rustup}"
 
 # Component toggle defaults
+ENABLE_CLAUDE_CODE="${ENABLE_CLAUDE_CODE:-true}"
 ENABLE_PYTHON="${ENABLE_PYTHON:-true}"
 ENABLE_OPENCODE="${ENABLE_OPENCODE:-false}"
 ENABLE_GRAPHIFY="${ENABLE_GRAPHIFY:-false}"
@@ -199,7 +200,44 @@ get_version() {
 }
 
 # =============================================================================
-# Section 5: Python (pyenv)
+# Section 5: Claude Code
+# =============================================================================
+
+install_claude_code_user() {
+    if [[ "${ENABLE_CLAUDE_CODE}" != "true" ]]; then
+        record_result "Claude Code" "SKIP" "(disabled)"
+        return 0
+    fi
+
+    if [[ "${FORCE}" != "true" ]] && is_installed claude; then
+        local ver
+        ver="$(get_version claude --version)"
+        log_skip "Claude Code already installed: ${ver}"
+        record_result "Claude Code" "SKIP" "(installed)"
+        return 0
+    fi
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        log_dry "Would install Claude Code"
+        record_result "Claude Code" "DRY-RUN" ""
+        return 0
+    fi
+
+    log_info "Installing Claude Code..."
+
+    curl -fsSL https://claude.ai/install.sh | bash
+
+    # Add to PATH for current session
+    [[ -d "${HOME}/.local/bin" ]] && export PATH="${HOME}/.local/bin:${PATH}"
+
+    local ver
+    ver="$(get_version claude --version)"
+    log_success "Claude Code installed: ${ver}"
+    record_result "Claude Code" "OK" "${ver}"
+}
+
+# =============================================================================
+# Section 6: Python (pyenv)
 # =============================================================================
 
 install_python_user() {
@@ -489,6 +527,7 @@ main() {
         exit 1
     fi
 
+    install_claude_code_user
     install_python_user
     install_opencode_user
     install_graphify_user

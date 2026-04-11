@@ -19,6 +19,7 @@ services:
         ENABLE_PNPM: "${ENABLE_PNPM:-true}"
         ENABLE_BUN: "${ENABLE_BUN:-true}"
         ENABLE_CLAUDE_CODE: "${ENABLE_CLAUDE_CODE:-true}"
+        ENABLE_CLAUDE_CODE_ROUTER: "${ENABLE_CLAUDE_CODE_ROUTER:-false}"
         ENABLE_CODEX: "${ENABLE_CODEX:-true}"
         ENABLE_GEMINI: "${ENABLE_GEMINI:-false}"
         ENABLE_OPENCODE: "${ENABLE_OPENCODE:-false}"

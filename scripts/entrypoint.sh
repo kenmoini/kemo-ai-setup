@@ -7,6 +7,9 @@
 # =============================================================================
 
 # --- PATH setup ---
+# Claude Code (native installer)
+[[ -d "${HOME}/.local/bin" ]]        && export PATH="${HOME}/.local/bin:${PATH}"
+
 # npm global prefix (container installs as root to /usr/local, no change needed)
 # For non-root user scenarios:
 [[ -d "${HOME}/.npm-global/bin" ]]   && export PATH="${HOME}/.npm-global/bin:${PATH}"
@@ -36,7 +39,7 @@ fi
 # --- Version banner (optional) ---
 if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
     echo "=== Installed Tools ==="
-    for cmd in node npm npx pnpm bun claude codex gemini dev-browser opencode graphify go python3 rustc php java mvn gradle git gcc make; do
+    for cmd in node npm npx pnpm bun claude ccr codex gemini dev-browser opencode graphify go python3 rustc php java mvn gradle git gcc make; do
         if command -v "${cmd}" &>/dev/null; then
             if [[ "${cmd}" == "go" ]]; then
                 ver="$(go version 2>/dev/null)" || ver="(unknown)"
@@ -46,6 +49,8 @@ if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
                 ver="$(pip show graphifyy | grep ^Version: | awk '{print $2}')" || ver="(unknown)"
             elif [[ "${cmd}" == "dev-browser" ]]; then
                 ver="$(npm list -g dev-browser --depth=0 --json 2>/dev/null | jq -r '.dependencies["dev-browser"].version' 2>/dev/null)" || ver="(unknown)"
+            elif [[ "${cmd}" == "ccr" ]]; then
+                ver="$(ccr -v 2>/dev/null | awk '{print $2}')" || ver="(unknown)"
             else
                 ver="$("${cmd}" --version 2>/dev/null | head -1)" || ver="(unknown)"
             fi
