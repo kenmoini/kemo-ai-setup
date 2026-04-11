@@ -86,7 +86,7 @@ COPY components/ /tmp/components/
 # ---------------------------------------------------------------------------
 # RUN dnf update -y --disablerepo="*" --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms --enablerepo=ubi-9-codeready-builder-rpms \
 RUN dnf update -y \
-    && dnf install nano wget curl bash-completion openssh-clients jq procps-ng which iputils -y \
+    && dnf install nano wget curl bash-completion openssh-clients jq procps-ng which iputils net-tools -y \
     && /tmp/install.sh --force \
     && rm -rf /tmp/install.sh /tmp/components \
     && dnf clean all \
