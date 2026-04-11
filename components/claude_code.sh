@@ -6,12 +6,12 @@ install_claude_code() {
 
     log_info "Installing Claude Code..."
     if [[ "${DRY_RUN}" == "true" ]]; then
-        log_dry "Would run: npm install -g @anthropic-ai/claude-code"
+        log_dry "Would run: curl -fsSL https://claude.ai/install.sh | bash"
         record_result "Claude Code" "DRY-RUN" ""
         return 0
     fi
 
-    npm install -g @anthropic-ai/claude-code
+    curl -fsSL https://claude.ai/install.sh | bash
     npm cache clean --force
 
     local ver
