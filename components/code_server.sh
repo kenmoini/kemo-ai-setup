@@ -27,7 +27,7 @@ install_code_server() {
                 if [[ "$UID" -eq 0 ]]; then
                     mkdir -p /home/dev/.config/code-server 2>/dev/null || true
                     cp -R /root/.config/code-server /home/dev/.config/code-server 2>/dev/null || true
-                    chown -R dev:dev /home/dev/.config/code-server 2>/dev/null || true
+                    chown -R dev:dev /home/dev/.config 2>/dev/null || true
                 fi
             fi
             ;;

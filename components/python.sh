@@ -91,7 +91,7 @@ PYENV_PROFILE
 
     if [[ "${OS_FAMILY}" != "macos" ]]; then
         if [[ "$UID" -eq 0 ]]; then
-            cp -R /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
+            cp -RL /root/.pyenv /home/dev/.pyenv 2>/dev/null || true
             chown -R dev:dev /home/dev/.pyenv 2>/dev/null || true
         fi
     fi
