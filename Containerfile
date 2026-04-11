@@ -102,7 +102,9 @@ ENV HOME=/home/dev
 ENV SHOW_VERSIONS=true
 
 COPY --chmod=777 user-install.sh /tmp/user-install.sh
-RUN /tmp/user-install.sh --force
+RUN /tmp/user-install.sh --force \
+    && mkdir -p /home/dev/.bashrc.d
+COPY --chmod=644 scripts/dev-paths.sh /home/dev/.bashrc.d/dev-paths.sh
 
 USER root
 RUN rm -f /tmp/user-install.sh /tmp/versions.env
