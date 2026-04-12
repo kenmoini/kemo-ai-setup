@@ -40,6 +40,8 @@ ARG ENABLE_OPENJDK=false
 ARG ENABLE_MAVEN=false
 ARG ENABLE_GRADLE=false
 ARG ENABLE_CODE_SERVER=false
+ARG START_CODE_SERVER=false
+ARG SHOW_VERSIONS=true
 
 # ---------------------------------------------------------------------------
 # Convert ARGs to ENVs so install.sh can read them
@@ -63,7 +65,9 @@ ENV ENABLE_GIT=${ENABLE_GIT} \
     ENABLE_OPENJDK=${ENABLE_OPENJDK} \
     ENABLE_MAVEN=${ENABLE_MAVEN} \
     ENABLE_GRADLE=${ENABLE_GRADLE} \
-    ENABLE_CODE_SERVER=${ENABLE_CODE_SERVER}
+    ENABLE_CODE_SERVER=${ENABLE_CODE_SERVER} \
+    START_CODE_SERVER=${START_CODE_SERVER} \
+    SHOW_VERSIONS=${SHOW_VERSIONS}
 
 # ---------------------------------------------------------------------------
 # Create non-root user

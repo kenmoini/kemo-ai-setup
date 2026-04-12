@@ -33,5 +33,10 @@ if [[ "${SHOW_VERSIONS:-false}" == "true" ]]; then
     echo ""
 fi
 
+if [[ "${START_CODE_SERVER:-false}" == "true" ]]; then
+    echo "Starting code-server on port 8080..."
+    code-server --bind-addr 0.0.0.0:8080 &
+fi
+
 # --- Exec into CMD ---
 exec "$@"
