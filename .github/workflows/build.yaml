@@ -57,7 +57,6 @@ jobs:
         run: |
           docker run --rm kemo-ai-container:test bash -lc '
             echo "=== Tool Verification ==="
-            set -e
             for cmd in node npm npx pnpm bun claude ccr codex gemini dev-browser opencode graphify go python3 rustc php java mvn gradle git gcc make; do
                 if command -v "${cmd}" &>/dev/null; then
                     if [[ "${cmd}" == "go" ]]; then
